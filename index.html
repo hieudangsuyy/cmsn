@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Happy Birthday Vũ Đức Phong 30/12/2007</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Cấu hình chữ
+        const text1 = "HAPPY BIRTHDAY Vũ Đức Phong";
+        const text2 = "          30 / 12 / 2007    ";
+
+        function init() {
+            ctx.fillStyle = "white";
+            ctx.font = "bold 40px Arial";
+            // Vẽ chữ ẩn để lấy tọa độ hạt
+            ctx.fillText(text1, canvas.width/2 - 180, canvas.height/2 - 40);
+            ctx.fillText(text2, canvas.width/2 - 150, canvas.height/2 + 40);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let y = 0; y < canvas.height; y += 4) {
+                for (let x = 0; x < canvas.width; x += 4) {
+                    if (imageData.data[(y * 4 * imageData.width) + (x * 4) + 3] > 128) {
+                        particles.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            targetX: x,
+                            targetY: y,
+                            color: y < canvas.height/2 ? "#FF69B4" : "#FFFFFF" // Hồng cho dòng 1, trắng cho dòng 2
+                        });
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                p.x += (p.targetX - p.x) * 0.05;
+                p.y += (p.targetY - p.y) * 0.05;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
